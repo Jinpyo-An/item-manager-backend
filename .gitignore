@@ -323,3 +323,6 @@ data
 
 # prisma
 /prisma
+
+# jwt info
+/src/auth/const

@@ -8,5 +8,12 @@
       <jdbc-url>jdbc:postgresql://localhost:35432/item_manager</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
+    <data-source source="LOCAL" name="stevia_main" uuid="bc958842-31c6-4bf0-b0a7-46d17f7a6fc1">
+      <driver-ref>postgresql</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql://localhost:15432/stevia_main</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
   </component>
 </project>
