@@ -1,5 +1,5 @@
 import {
-    Injectable, UnauthorizedException,
+    Injectable,
 } from '@nestjs/common';
 import {
     UsersRepository,

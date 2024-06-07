@@ -1,17 +1,33 @@
 import {
     Body,
-    Controller, Headers, Post,
+    Controller, Headers, Post, UseGuards,
 } from '@nestjs/common';
 import {
     AuthService, 
 } from './auth.service';
+import {
+    PasswordPipe, 
+} from './pipe/password.pipe';
+import {
+    EmailPipe, 
+} from './pipe/email.pipe';
+import {
+    NamePipe, 
+} from './pipe/name.pipe';
+import {
+    BasicTokenGuard, 
+} from './guard/basic-token.guard';
+import {
+    RefreshTokenGuard,
+} from './guard/bearer-token.guard';
 
 @Controller('api/auth')
 export class AuthController {
     constructor(private readonly authService: AuthService) {}
 
     @Post('token/access')
-    postAccessToken(@Headers('Authorization') rawToken: string) {
+    @UseGuards(RefreshTokenGuard)
+    postAccessToken(@Headers('authorization') rawToken: string) {
         const token = this.authService.extractTokenFromHeader(rawToken, true);
 
         const newToken = this.authService.rotateToken(token, false);
@@ -22,7 +38,8 @@ export class AuthController {
     }
 
     @Post('token/refresh')
-    postRefreshToken(@Headers('Authorization') rawToken: string) {
+    @UseGuards(RefreshTokenGuard)
+    postRefreshToken(@Headers('authorization') rawToken: string) {
         const token = this.authService.extractTokenFromHeader(rawToken, true);
 
         const newToken = this.authService.rotateToken(token, true);
@@ -37,7 +54,8 @@ export class AuthController {
      * email:password는 base64로 인코딩된 상태로 요청을 보냄
      */
     @Post('signin')
-    signinEmail(@Headers('Authorization') rawToken: string) {
+    @UseGuards(BasicTokenGuard)
+    signinEmail(@Headers('authorization') rawToken: string) {
         const token = this.authService.extractTokenFromHeader(rawToken, false);
 
         const emailAndPassword = this.authService.decodeBasicToken(token);
@@ -46,9 +64,9 @@ export class AuthController {
     }
 
     @Post('signup')
-    signupEmail(@Body('name') name: string,
-                @Body('email') email: string,
-                @Body('password') password: string,) {
+    signupEmail(@Body('name', NamePipe) name: string,
+                @Body('email', EmailPipe) email: string,
+                @Body('password', PasswordPipe) password: string,) {
         return this.authService.signUpWithEmail({
             name,
             email,
