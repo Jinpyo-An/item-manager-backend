@@ -16,6 +16,9 @@ import {
 import {
     AuthModule,
 } from './auth/auth.module';
+import {
+    ProductsModule, 
+} from './products/products.module';
 
 @Module({
     imports: [
@@ -27,6 +30,7 @@ import {
         PrismaModule,
         UsersModule,
         AuthModule,
+        ProductsModule,
     ],
     controllers: [],
     providers: [PrismaService,],
