@@ -19,6 +19,15 @@ import {
 import {
     ProductsModule, 
 } from './products/products.module';
+import {
+    UserProductsModule, 
+} from './user-products/user-products.module';
+import {
+    ServeStaticModule, 
+} from '@nestjs/serve-static';
+import {
+    PUBLIC_FOLDER_PATH, 
+} from './const/path.const';
 
 @Module({
     imports: [
@@ -27,10 +36,15 @@ import {
             cache: true,
             envFilePath: '.env',
         }),
+        ServeStaticModule.forRoot({
+            rootPath: PUBLIC_FOLDER_PATH,
+            serveRoot: '/public',
+        }),
         PrismaModule,
         UsersModule,
         AuthModule,
         ProductsModule,
+        UserProductsModule,
     ],
     controllers: [],
     providers: [PrismaService,],

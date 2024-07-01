@@ -9,7 +9,7 @@ import {
 } from '@nestjs/jwt';
 import {
     HASH_ROUNDS, JWT_SECRET, 
-} from './const/auth.const';
+} from '../const/auth.const';
 import * as bcrypt from 'bcrypt';
 import {
     UsersService, 
@@ -114,7 +114,7 @@ export class AuthService {
 
         return this.jwtService.sign(payload, {
             secret: JWT_SECRET,
-            expiresIn: isRefreshToken ? 3600: 300,
+            expiresIn: isRefreshToken ? 5000: 3000,
         });
     }
 

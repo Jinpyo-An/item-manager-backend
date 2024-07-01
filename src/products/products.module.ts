@@ -28,6 +28,7 @@ import {
         AuthModule,
         UsersModule,
         JwtModule.register({}),],
+    exports: [ProductsRepository,],
     controllers: [ProductsController,],
     providers: [ProductsService,
         ProductsRepository,],
