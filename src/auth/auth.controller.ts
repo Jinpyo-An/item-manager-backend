@@ -27,7 +27,7 @@ export class AuthController {
 
     @Post('token/access')
     @UseGuards(RefreshTokenGuard)
-    postAccessToken(@Headers('authorization') rawToken: string) {
+    createAccessToken(@Headers('authorization') rawToken: string) {
         const token = this.authService.extractTokenFromHeader(rawToken, true);
 
         const newToken = this.authService.rotateToken(token, false);
@@ -39,7 +39,7 @@ export class AuthController {
 
     @Post('token/refresh')
     @UseGuards(RefreshTokenGuard)
-    postRefreshToken(@Headers('authorization') rawToken: string) {
+    createRefreshToken(@Headers('authorization') rawToken: string) {
         const token = this.authService.extractTokenFromHeader(rawToken, true);
 
         const newToken = this.authService.rotateToken(token, true);
