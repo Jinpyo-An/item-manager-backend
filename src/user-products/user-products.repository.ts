@@ -12,7 +12,7 @@ export class UserProductsRepository {
     }
 
     getProductByCategory(category: string) {
-        return this.prismaService.product.findUnique({
+        return this.prismaService.products.findUnique({
             where: {
                 category,
             },
@@ -20,13 +20,13 @@ export class UserProductsRepository {
     }
 
     registerUserProduct(nickname: string, imageUrl: string, usageStartDate: Date, registrantId: string, productId: string) {
-        return this.prismaService.user_product.create({
+        return this.prismaService.user_products.create({
             data: {
-                nickname,
-                image_url: imageUrl,
+                user_product_nickname: nickname,
+                image_path: imageUrl,
                 usage_start_date: usageStartDate,
                 registrant_id: registrantId,
-                product_id: productId,
+                product_type_id: productId,
             },
         });
     }

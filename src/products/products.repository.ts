@@ -11,11 +11,11 @@ export class ProductsRepository {
     }
 
     getAllProducts() {
-        return this.prismaService.product.findMany();
+        return this.prismaService.products.findMany();
     }
 
     getProductById(productId: string) {
-        return this.prismaService.product.findFirst({
+        return this.prismaService.products.findFirst({
             where: {
                 id: productId,
             },

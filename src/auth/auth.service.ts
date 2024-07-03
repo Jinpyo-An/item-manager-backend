@@ -105,7 +105,7 @@ export class AuthService {
      * accessToken과 refreshToken을 sign(생성)
      * 회원가입과 로그인(signUpWithEmail, signInWithEmail) 시 사용
      */
-    signToken(user: Pick<Prisma.userCreateInput, 'email' | 'id'>, isRefreshToken: boolean) {
+    signToken(user: Pick<Prisma.usersCreateInput, 'email' | 'id'>, isRefreshToken: boolean) {
         const payload = {
             email: user.email,
             sub: user.id,
@@ -122,7 +122,7 @@ export class AuthService {
      * signInUser
      * 사용자 확인 완료 -> accessToken과 refreshToken을 반환
      */
-    returnToken(user: Pick<Prisma.userCreateInput, 'email' | 'id'>) {
+    returnToken(user: Pick<Prisma.usersCreateInput, 'email' | 'id'>) {
         return {
             accessToken: this.signToken(user, false),
             refreshToken: this.signToken(user, true),
@@ -133,7 +133,7 @@ export class AuthService {
      * name, email, password를 입력받고 사용자 생성
      * 사용자 생성 시, accessToken, RefreshToken 반환
      */
-    async signUpWithEmail(user: Pick<Prisma.userCreateInput, 'name' | 'email' | 'password'>) {
+    async signUpWithEmail(user: Pick<Prisma.usersCreateInput, 'name' | 'email' | 'password'>) {
         const hashPassword = await bcrypt.hash(user.password, HASH_ROUNDS);
 
         const newUser = await this.userService.createUser({
@@ -149,7 +149,7 @@ export class AuthService {
      * 가입한 사용자가 email, password를 입력하면 검증을 진행
      * 검증이 완료되면, accessToken과 refreshToken을 반환
      */
-    async signInWithEmail(user: Pick<Prisma.userCreateInput, 'email' | 'password'>) {
+    async signInWithEmail(user: Pick<Prisma.usersCreateInput, 'email' | 'password'>) {
         const existingUser = await this.authenticateWithEmailAndPassword(user);
 
         return this.returnToken(existingUser);
@@ -161,7 +161,7 @@ export class AuthService {
      * 2. 비밀번호 맞는 지 확인
      * 3. 모두 통과 시, 사용자 정보 반환
      */
-    async authenticateWithEmailAndPassword(user: Pick<Prisma.userCreateInput, 'email' | 'password'>) {
+    async authenticateWithEmailAndPassword(user: Pick<Prisma.usersCreateInput, 'email' | 'password'>) {
         const existingUser = await this.userService.getUserByEmail(user.email);
 
         if (!existingUser) {
