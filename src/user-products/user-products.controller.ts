@@ -1,6 +1,6 @@
 import {
     Body,
-    Controller, Delete, Get, Patch, Post, Request, UploadedFile, UseGuards, UseInterceptors,
+    Controller, Delete, Get, Param, Patch, Post, Request, UploadedFile, UseGuards, UseInterceptors,
 } from '@nestjs/common';
 import {
     UserProductsService, 
@@ -33,9 +33,9 @@ export class UserProductsController {
         const registrantId = request.user.id;
 
         // 파일 경로 저장
-        const imageUrl = `${USER_PRODUCTS_PUBLIC_IMAGE_PATH}/${file.filename}`;
+        const imagePath = `${USER_PRODUCTS_PUBLIC_IMAGE_PATH}/${file.filename}`;
 
-        return this.userProductsService.createUserProduct(userProductsDto, imageUrl, registrantId);
+        return this.userProductsService.createUserProduct(userProductsDto, imagePath, registrantId);
     }
 
     // 사용자 전자제품 조회
@@ -44,9 +44,11 @@ export class UserProductsController {
     getUserProducts() {}
 
     // 사용자 전자제품 상세 조회
-    @Get(':id')
+    @Get(':userProductId')
     @UseGuards(AccessTokenGuard)
-    getUserProductById() {}
+    getUserProductById(@Param('userProductId') userProductId: string) {
+        return
+    }
 
     // 사용자 전자제품 수정
     @Patch(':id')

@@ -5,7 +5,7 @@ import {
 export class UserProductsDto {
   @IsString()
   @IsNotEmpty()
-  nickname: string;
+  userProductNickname: string;
 
   @IsString()
   @IsNotEmpty()
