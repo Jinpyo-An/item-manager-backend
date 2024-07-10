@@ -1,6 +1,6 @@
 import {
     Body,
-    Controller, Delete, Get, Param, Patch, Post, Request, UploadedFile, UseGuards, UseInterceptors,
+    Controller, Delete, Get, Param, ParseUUIDPipe, Patch, Post, Request, UploadedFile, UseGuards, UseInterceptors,
 } from '@nestjs/common';
 import {
     UserProductsService, 
@@ -41,13 +41,17 @@ export class UserProductsController {
     // 사용자 전자제품 조회
     @Get()
     @UseGuards(AccessTokenGuard)
-    getUserProducts() {}
+    async getUserProducts(@Request() request: any) {
+        const registrantId = request.user.id;
+
+        return await this.userProductsService.getUserProducts(registrantId);
+    }
 
     // 사용자 전자제품 상세 조회
     @Get(':userProductId')
     @UseGuards(AccessTokenGuard)
-    getUserProductById(@Param('userProductId') userProductId: string) {
-        return
+    async getUserProductById(@Param('userProductId', ParseUUIDPipe) userProductId: string) {
+        return await this.userProductsService.getUserProductById(userProductId);
     }
 
     // 사용자 전자제품 수정

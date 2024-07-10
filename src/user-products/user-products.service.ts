@@ -14,13 +14,6 @@ export class UserProductsService {
     constructor(private readonly userProductsRepository: UserProductsRepository) {
     }
 
-    /**
-     * createUserProduct(): 사용자 전자제품 등록
-     *
-     * @param userProductsDto   => 제품등록에 필요한 데이터
-     * @param imagePath          => 이미지가 저장되어 있는 경로
-     * @param registrantId      => 전자제품을 등록하는 사용자 아이디
-     */
     async createUserProduct(userProductsDto: UserProductsDto, imagePath: string, registrantId: string):Promise<{userProductId: string}> {
         // DTO를 각각의 변수에 저장
         const {
@@ -43,51 +36,67 @@ export class UserProductsService {
         };
     }
 
-    /**
-     * 사용자 전자제품 상세 조회 API 설계
-     * 1. 사용자 전자제품 정보를 가져온다.
-     * 2. 사용자 전자제품의 권장 사용 기간을 가져온다.
-     * 3. 현재 날짜와 사용 시작 날짜를 통해 사용한 시간를 계산한다.
-     * 4. 사용한 시간과 권장 시간을 통해 사용 가능한 시간을 계산한다.
-     */
     async getUserProductById(userProductId: string) {
+        // 사용자 전자제품 테이블 정보 가져오기
         const userProduct = await this.userProductsRepository.getUserProduct(userProductId);
 
+        // 전자제품 권장 사용 기간 가져오기
         const recommendUsageDuration = await this.userProductsRepository.getProductRecommendUsageDuration(userProduct.product_type_id);
 
+        // 전자제품을 지금까지 사용한 시간 구하기
         const periodUsed = await this.getPeriodUsed(userProduct.usage_start_date);
 
-        const availablePeriod =
+        // 사용 가능한 시간 구하기
+        const availablePeriod = await this.getAvailablePeriod(periodUsed, recommendUsageDuration);
+
+        return {
+            id: userProduct.id,
+            userProductNickname: userProduct.user_product_nickname,
+            recommendUsageDuration: recommendUsageDuration,
+            periodUsed: `${periodUsed.years}년 ${periodUsed.months}개월`,
+            availablePeriod: `${availablePeriod.years}년 ${availablePeriod.months}개월`,
+            imagePath: userProduct.image_path,
+        };
     }
 
-    // 사용자 전자제품 사용한 시간 계산
-    async getPeriodUsed(usageStartDate: Date): Promise<string> {
-        const currentDate = new Date();
+    async getPeriodUsed(usageStartDate: Date) {
+        const now = new Date();
 
-        // 년 차이 계산
-        let yearDifference = currentDate.getFullYear() - usageStartDate.getFullYear();
+        let years = now.getFullYear() - usageStartDate.getFullYear();
+        let months = now.getMonth() - usageStartDate.getMonth();
 
-        // 월 차이 계산
-        let monthDifference = currentDate.getMonth() - usageStartDate.getMonth();
-
-        // 일 차이 계산
-        let dayDifference = currentDate.getDay() - usageStartDate.getDay();
-
-        if (dayDifference < 0) {
-            monthDifference--;
+        if (months < 0) {
+            years--;
+            months += 12;
         }
 
-        if (monthDifference < 0) {
-            yearDifference--;
-            monthDifference +=12;
-        }
+        return {
+            years,
+            months,
+        };
+    }
 
-        if (dayDifference < 0) {
-            const previousMonth = (currentDate.getMonth() - 1 + 12) % 12;
-            const daysInPreviousMonth = new Date(currentDate.getFullYear(), previousMonth + 1, 0).getDate();
-            dayDifference += daysInPreviousMonth;
-        }
+    async getAvailablePeriod(periodUsed: { years: number, months: number }, recommendUsageDuration: number) {
+        const totalUsedMonths = (periodUsed.years *12) + periodUsed.months;
+        const totalRecommendMonths = recommendUsageDuration * 12;
 
-        return `${yearDifference}년 ${monthDifference} 개월`;
+        const remainMonths = totalRecommendMonths - totalUsedMonths;
+
+        const years = Math.floor(remainMonths / 12);
+        const months = remainMonths % 12;
+
+        return {
+            years,
+            months,
+        };
+    }
+
+    /**
+     * 사용자 전자제품 조회 시나리오
+     * 1. 등록자 아이디로 등록한 전자제품들을 가져온다.
+     * 2. 배열의 각각의 객체 요소에 계산에 필요한 recommendUsageDuration를 추가한다.
+     */
+    async getUserProducts(registrantId: string) {
+        const userProducts = await this.userProductsRepository.getUserProducts(registrantId);
     }
 }

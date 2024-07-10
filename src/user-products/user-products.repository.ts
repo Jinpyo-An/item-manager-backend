@@ -61,4 +61,12 @@ export class UserProductsRepository {
 
         return  recommendUsageDuration.recommend_usage_duration;
     }
+
+    getUserProducts(registrantId: string) {
+        return this.prismaService.user_products.findMany({
+            where: {
+                registrant_id: registrantId,
+            },
+        });
+    }
 }
