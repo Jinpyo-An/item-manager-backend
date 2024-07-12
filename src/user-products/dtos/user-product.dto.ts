@@ -2,10 +2,10 @@ import {
     IsNotEmpty, IsString,
 } from 'class-validator';
 
-export class UserProductsDto {
+export class UserProductDto {
   @IsString()
   @IsNotEmpty()
-  nickname: string;
+  userProductNickname: string;
 
   @IsString()
   @IsNotEmpty()

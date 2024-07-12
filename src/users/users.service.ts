@@ -13,7 +13,7 @@ export class UsersService {
     constructor(private readonly userRepository: UsersRepository) {
     }
 
-    createUser(userDto: Pick<Prisma.userCreateInput, 'name' | 'email' | 'password'>) {
+    createUser(userDto: Pick<Prisma.usersCreateInput, 'name' | 'email' | 'password'>) {
         return this.userRepository.createUser(userDto);
     }
 
