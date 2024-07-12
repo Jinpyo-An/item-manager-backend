@@ -6,16 +6,16 @@ import {
     UserProductsRepository,
 } from './user-products.repository';
 import {
-    UserProductsDto, 
-} from './dtos/user-products.dto';
+    UserProductDto,
+} from './dtos/user-product.dto';
 
 @Injectable()
 export class UserProductsService {
     constructor(private readonly userProductsRepository: UserProductsRepository) {
     }
 
-    async createUserProduct(userProductsDto: UserProductsDto, imagePath: string, registrantId: string):Promise<{userProductId: string}> {
-        // DTO를 각각의 변수에 저장
+    // createUserProduct(): 사용자 전자제품 등록
+    async createUserProduct(userProductsDto: UserProductDto, imagePath: string, registrantId: string):Promise<{userProductId: string}> {
         const {
             userProductNickname, usageStartDate, category,
         } = userProductsDto;
@@ -36,6 +36,7 @@ export class UserProductsService {
         };
     }
 
+    // getUserProductById(): 사용자 전자제품 상세 조회
     async getUserProductById(userProductId: string) {
         // 사용자 전자제품 테이블 정보 가져오기
         const userProduct = await this.userProductsRepository.getUserProduct(userProductId);
@@ -59,11 +60,12 @@ export class UserProductsService {
         };
     }
 
+    // getPeriodUsed(): 등록한 전자제품을 사용한 시간 구하기
     async getPeriodUsed(usageStartDate: Date) {
-        const now = new Date();
+        const nowDate = new Date();
 
-        let years = now.getFullYear() - usageStartDate.getFullYear();
-        let months = now.getMonth() - usageStartDate.getMonth();
+        let years = nowDate.getFullYear() - usageStartDate.getFullYear();
+        let months = nowDate.getMonth() - usageStartDate.getMonth();
 
         if (months < 0) {
             years--;
@@ -76,14 +78,15 @@ export class UserProductsService {
         };
     }
 
+    // getAvailablePeriod(): 등록한 전자제품의 사용 가능한 시간 구하기
     async getAvailablePeriod(periodUsed: { years: number, months: number }, recommendUsageDuration: number) {
         const totalPeriodUsedMonths = (periodUsed.years *12) + periodUsed.months;
         const totalRecommendUsageDurationMonths = recommendUsageDuration * 12;
 
-        const remainMonths = totalRecommendUsageDurationMonths - totalPeriodUsedMonths;
+        const availableMonths = totalRecommendUsageDurationMonths - totalPeriodUsedMonths;
 
-        const years = Math.floor(remainMonths / 12);
-        const months = remainMonths % 12;
+        const years = Math.floor(availableMonths / 12);
+        const months = availableMonths % 12;
 
         return {
             years,
@@ -91,37 +94,37 @@ export class UserProductsService {
         };
     }
 
-    /**
-     * 사용자 전자제품 조회 시나리오
-     * 1. 등록자 아이디로 등록한 전자제품들을 가져온다.
-     *
-     */
+    // getUserProducts(): 사용자 전자제품 전체 조회
     async getUserProducts(registrantId: string) {
-        const userProductList = await this.userProductsRepository.getUserProductList(registrantId);
+        // 사용자 전자제품 정보 가져오기
+        const userProductList1 = await this.userProductsRepository.getUserProductList(registrantId);
 
-        const periodUsedPromises = userProductList.map(userProduct => this.getPeriodUsed(userProduct.usage_start_date));
+        const periodUsedPromises = userProductList1.map(userProduct => this.getPeriodUsed(userProduct.usage_start_date));
 
-        const periodUseds = await Promise.all(periodUsedPromises);
+        const periodUsed = await Promise.all(periodUsedPromises);
 
-        const combinedList1 = userProductList.map((userProduct, index) => {
+        // userProductList에 periodUsed 객체 삽입
+        const userProductList2 = userProductList1.map((userProduct, index) => {
             return {
                 ...userProduct,
-                periodUsed: periodUseds[index],
+                periodUsed: periodUsed[index],
             };
         });
 
-        const availablePeriodPromises = combinedList1.map(combinedProduct => this.getAvailablePeriod(combinedProduct.periodUsed, combinedProduct.product_type.recommend_usage_duration));
+        const availablePeriodPromises = userProductList2.map(combinedProduct => this.getAvailablePeriod(combinedProduct.periodUsed, combinedProduct.product_type.recommend_usage_duration));
 
         const availablePeriods = await Promise.all(availablePeriodPromises);
 
-        const combinedList2 = combinedList1.map((userProducts2, index) => {
+        // userProductList에 availablePeriod 객체 삽입
+        const userProductList3 = userProductList2.map((userProducts2, index) => {
             return {
                 ...userProducts2,
                 availablePeriod: availablePeriods[index],
             };
         });
 
-        const result = combinedList2.map(userProduct => {
+        // 응답 DTO 규격에 맞게 적용
+        const userProductList = userProductList3.map(userProduct => {
             return {
                 id: userProduct.id,
                 userProductNickname: userProduct.user_product_nickname,
@@ -133,7 +136,7 @@ export class UserProductsService {
         });
 
         return {
-            result,
+            userProductList,
         };
     }
 }

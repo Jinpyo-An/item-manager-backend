@@ -12,8 +12,8 @@ import {
     FileInterceptor, 
 } from '@nestjs/platform-express';
 import {
-    UserProductsDto, 
-} from './dtos/user-products.dto';
+    UserProductDto,
+} from './dtos/user-product.dto';
 import {
     USER_PRODUCTS_PUBLIC_IMAGE_PATH,
 } from '../const/path.const';
@@ -27,15 +27,16 @@ export class UserProductsController {
     @UseGuards(AccessTokenGuard)
     @UseInterceptors(FileInterceptor('image'))
     createUserProduct(@Request() request: any,
-                      @Body() userProductsDto: UserProductsDto,
+                      @Body() userProductDto: UserProductDto,
                       @UploadedFile() file: Express.Multer.File): Promise<{userProductId: string}> {
-        // 제품 등록자(사용자) 아이디 저장
+        // 전자제품 등록한 사람 아이디 저장
         const registrantId = request.user.id;
 
         // 파일 경로 저장
         const imagePath = `${USER_PRODUCTS_PUBLIC_IMAGE_PATH}/${file.filename}`;
 
-        return this.userProductsService.createUserProduct(userProductsDto, imagePath, registrantId);
+        // 등록된 사용자 전자제품 아이디 반환
+        return this.userProductsService.createUserProduct(userProductDto, imagePath, registrantId);
     }
 
     // 사용자 전자제품 조회
