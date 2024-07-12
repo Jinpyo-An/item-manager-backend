@@ -58,10 +58,10 @@ export class UserProductsController {
     // 사용자 전자제품 수정
     @Patch(':id')
     @UseGuards(AccessTokenGuard)
-    patchUserProductById() {}
+    modifyUserProductById() {}
 
     // 사용자 전자제품 삭제
     @Delete(':id')
     @UseGuards(AccessTokenGuard)
-    deleteUserProductById() {}
+    removeUserProductById() {}
 }

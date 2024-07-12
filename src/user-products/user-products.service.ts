@@ -15,7 +15,9 @@ export class UserProductsService {
     }
 
     // createUserProduct(): 사용자 전자제품 등록
-    async createUserProduct(userProductsDto: UserProductDto, imagePath: string, registrantId: string):Promise<{userProductId: string}> {
+    async createUserProduct(
+        userProductsDto: UserProductDto, imagePath: string, registrantId: string
+    ):Promise<{userProductId: string}> {
         const {
             userProductNickname, usageStartDate, category,
         } = userProductsDto;
@@ -28,7 +30,9 @@ export class UserProductsService {
         }
 
         // 사용자 전자제품 등록
-        const userProduct = await this.userProductsRepository.registerUserProduct(userProductNickname, imagePath, new Date(usageStartDate), registrantId, product.id);
+        const userProduct = await this.userProductsRepository.registerUserProduct(
+            userProductNickname, imagePath, new Date(usageStartDate), registrantId, product.id
+        );
 
         // 등록된 사용자 전자제품 아이디 반환
         return {
@@ -42,7 +46,9 @@ export class UserProductsService {
         const userProduct = await this.userProductsRepository.getUserProduct(userProductId);
 
         // 전자제품 권장 사용 기간 가져오기
-        const recommendUsageDuration = await this.userProductsRepository.getProductRecommendUsageDuration(userProduct.product_type_id);
+        const recommendUsageDuration = await this.userProductsRepository.getProductRecommendUsageDuration(
+            userProduct.product_type_id
+        );
 
         // 전자제품을 지금까지 사용한 시간 구하기
         const periodUsed = await this.getPeriodUsed(userProduct.usage_start_date);
@@ -99,7 +105,9 @@ export class UserProductsService {
         // 사용자 전자제품 정보 가져오기
         const userProductList1 = await this.userProductsRepository.getUserProductList(registrantId);
 
-        const periodUsedPromises = userProductList1.map(userProduct => this.getPeriodUsed(userProduct.usage_start_date));
+        const periodUsedPromises = userProductList1.map(userProduct =>
+            this.getPeriodUsed(userProduct.usage_start_date)
+        );
 
         const periodUsed = await Promise.all(periodUsedPromises);
 
@@ -111,7 +119,8 @@ export class UserProductsService {
             };
         });
 
-        const availablePeriodPromises = userProductList2.map(combinedProduct => this.getAvailablePeriod(combinedProduct.periodUsed, combinedProduct.product_type.recommend_usage_duration));
+        const availablePeriodPromises = userProductList2.map(combinedProduct =>
+            this.getAvailablePeriod(combinedProduct.periodUsed, combinedProduct.product_type.recommend_usage_duration));
 
         const availablePeriods = await Promise.all(availablePeriodPromises);
 

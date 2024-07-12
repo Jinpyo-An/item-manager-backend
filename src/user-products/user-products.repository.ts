@@ -19,7 +19,9 @@ export class UserProductsRepository {
         });
     }
 
-    async registerUserProduct(userProductNickname: string, imageUrl: string, usageStartDate: Date, registrantId: string, productTypeId: string) {
+    async registerUserProduct(
+        userProductNickname: string, imageUrl: string, usageStartDate: Date, registrantId: string, productTypeId: string
+    ) {
         return this.prismaService.user_products.create({
             data: {
                 user_product_nickname: userProductNickname,
