@@ -11,7 +11,7 @@ export class UserProductsRepository {
     constructor(private readonly prismaService: PrismaService) {
     }
 
-    async getProductByCategory(category: string) {
+    getProductByCategory(category: string) {
         return this.prismaService.products.findUnique({
             where: {
                 category,
@@ -30,7 +30,7 @@ export class UserProductsRepository {
             },
         });
     }
-    
+
     async getUserProduct(userProductId: string) {
         const userProduct = await this.prismaService.user_products.findUnique({
             where: {
