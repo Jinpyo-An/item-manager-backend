@@ -1,6 +1,6 @@
 import {
     Body,
-    Controller, Headers, Post, UseGuards,
+    Controller, Headers, Post, UseGuards, Request,
 } from '@nestjs/common';
 import {
     AuthService, 
@@ -27,10 +27,8 @@ export class AuthController {
 
     @Post('token/access')
     @UseGuards(RefreshTokenGuard)
-    createAccessToken(@Headers('authorization') rawToken: string) {
-        const token = this.authService.extractTokenFromHeader(rawToken, true);
-
-        const newToken = this.authService.rotateToken(token, false);
+    createAccessToken(@Request() request: any): { accessToken: string } {
+        const newToken = this.authService.rotateToken(request.token, false);
         
         return {
             accessToken: newToken,
@@ -39,10 +37,8 @@ export class AuthController {
 
     @Post('token/refresh')
     @UseGuards(RefreshTokenGuard)
-    createRefreshToken(@Headers('authorization') rawToken: string) {
-        const token = this.authService.extractTokenFromHeader(rawToken, true);
-
-        const newToken = this.authService.rotateToken(token, true);
+    createRefreshToken(@Request() request: any): { refreshToken: string } {
+        const newToken = this.authService.rotateToken(request.token, true);
 
         return {
             refreshToken: newToken,
@@ -55,7 +51,7 @@ export class AuthController {
      */
     @Post('signin')
     @UseGuards(BasicTokenGuard)
-    signinEmail(@Headers('authorization') rawToken: string) {
+    signinEmail(@Headers('authorization') rawToken: string): Promise<{ accessToken: string, refreshToken: string }> {
         const token = this.authService.extractTokenFromHeader(rawToken, false);
 
         const emailAndPassword = this.authService.decodeBasicToken(token);
@@ -66,7 +62,8 @@ export class AuthController {
     @Post('signup')
     signupEmail(@Body('name', NamePipe) name: string,
                 @Body('email', EmailPipe) email: string,
-                @Body('password', PasswordPipe) password: string,) {
+                @Body('password', PasswordPipe) password: string,
+    ): Promise<{ accessToken: string, refreshToken: string }> {
         return this.authService.signUpWithEmail({
             name,
             email,

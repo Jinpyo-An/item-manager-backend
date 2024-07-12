@@ -62,10 +62,21 @@ export class UserProductsRepository {
         return  recommendUsageDuration.recommend_usage_duration;
     }
 
-    getUserProducts(registrantId: string) {
+    getUserProductList(registrantId: string) {
         return this.prismaService.user_products.findMany({
             where: {
                 registrant_id: registrantId,
+            },
+            select: {
+                id: true,
+                user_product_nickname: true,
+                image_path: true,
+                usage_start_date: true,
+                product_type: {
+                    select: {
+                        recommend_usage_duration: true,
+                    },
+                },
             },
         });
     }

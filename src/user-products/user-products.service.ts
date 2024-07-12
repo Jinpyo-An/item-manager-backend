@@ -77,10 +77,10 @@ export class UserProductsService {
     }
 
     async getAvailablePeriod(periodUsed: { years: number, months: number }, recommendUsageDuration: number) {
-        const totalUsedMonths = (periodUsed.years *12) + periodUsed.months;
-        const totalRecommendMonths = recommendUsageDuration * 12;
+        const totalPeriodUsedMonths = (periodUsed.years *12) + periodUsed.months;
+        const totalRecommendUsageDurationMonths = recommendUsageDuration * 12;
 
-        const remainMonths = totalRecommendMonths - totalUsedMonths;
+        const remainMonths = totalRecommendUsageDurationMonths - totalPeriodUsedMonths;
 
         const years = Math.floor(remainMonths / 12);
         const months = remainMonths % 12;
@@ -94,9 +94,46 @@ export class UserProductsService {
     /**
      * 사용자 전자제품 조회 시나리오
      * 1. 등록자 아이디로 등록한 전자제품들을 가져온다.
-     * 2. 배열의 각각의 객체 요소에 계산에 필요한 recommendUsageDuration를 추가한다.
+     *
      */
     async getUserProducts(registrantId: string) {
-        const userProducts = await this.userProductsRepository.getUserProducts(registrantId);
+        const userProductList = await this.userProductsRepository.getUserProductList(registrantId);
+
+        const periodUsedPromises = userProductList.map(userProduct => this.getPeriodUsed(userProduct.usage_start_date));
+
+        const periodUseds = await Promise.all(periodUsedPromises);
+
+        const combinedList1 = userProductList.map((userProduct, index) => {
+            return {
+                ...userProduct,
+                periodUsed: periodUseds[index],
+            };
+        });
+
+        const availablePeriodPromises = combinedList1.map(combinedProduct => this.getAvailablePeriod(combinedProduct.periodUsed, combinedProduct.product_type.recommend_usage_duration));
+
+        const availablePeriods = await Promise.all(availablePeriodPromises);
+
+        const combinedList2 = combinedList1.map((userProducts2, index) => {
+            return {
+                ...userProducts2,
+                availablePeriod: availablePeriods[index],
+            };
+        });
+
+        const result = combinedList2.map(userProduct => {
+            return {
+                id: userProduct.id,
+                userProductNickname: userProduct.user_product_nickname,
+                recommendUsageDuration: userProduct.product_type.recommend_usage_duration,
+                periodUsed: `${userProduct.periodUsed.years}년 ${userProduct.periodUsed.months}개월`,
+                availablePeriod: `${userProduct.availablePeriod.years}년 ${userProduct.availablePeriod.months}개월`,
+                imagePath: userProduct.image_path,
+            };
+        });
+
+        return {
+            result,
+        };
     }
 }
