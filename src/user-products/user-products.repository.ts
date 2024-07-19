@@ -19,7 +19,9 @@ export class UserProductsRepository {
         });
     }
 
-    async registerUserProduct(userProductNickname: string, imageUrl: string, usageStartDate: Date, registrantId: string, productTypeId: string) {
+    async registerUserProduct(
+        userProductNickname: string, imageUrl: string, usageStartDate: Date, registrantId: string, productTypeId: string
+    ) {
         return this.prismaService.user_products.create({
             data: {
                 user_product_nickname: userProductNickname,
@@ -77,6 +79,31 @@ export class UserProductsRepository {
                         recommend_usage_duration: true,
                     },
                 },
+            },
+        });
+    }
+
+    // 사용자 전자제품 수정
+    modifyUserProduct(
+        userProductId: string, userProductNickname?: string, usageStartDate?: string, imagePath?: string
+    ) {
+        return this.prismaService.user_products.update({
+            where: {
+                id: userProductId,
+            },
+            data: {
+                user_product_nickname: userProductNickname,
+                usage_start_date: usageStartDate,
+                image_path: imagePath,
+            },
+        });
+    }
+
+    // 사용자 전자제품 삭제
+    deleteUserProductById(userProductId: string) {
+        return  this.prismaService.user_products.delete({
+            where: {
+                id: userProductId,
             },
         });
     }

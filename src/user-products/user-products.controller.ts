@@ -56,12 +56,32 @@ export class UserProductsController {
     }
 
     // 사용자 전자제품 수정
-    @Patch(':id')
+    @Patch(':userProductId')
     @UseGuards(AccessTokenGuard)
-    patchUserProductById() {}
+    @UseInterceptors(FileInterceptor('image'))
+    modifyUserProductById(@Param('userProductId', ParseUUIDPipe) userProductId: string,
+                          @Body('userProductNickname') userProductNickname?: string,
+                          @Body('usageStartDate') usageStartDate?: string,
+                          @UploadedFile() file?: Express.Multer.File) {
+
+        // 파일 경로 저장
+        if (file !== undefined) {
+            const imagePath = `${USER_PRODUCTS_PUBLIC_IMAGE_PATH}/${file.filename}`;
+
+            return this.userProductsService.modifyUserProductById(
+                userProductId, userProductNickname, usageStartDate, imagePath
+            );
+        }
+
+        return this.userProductsService.modifyUserProductById(
+            userProductId, userProductNickname, usageStartDate
+        );
+    }
 
     // 사용자 전자제품 삭제
-    @Delete(':id')
+    @Delete(':userProductId')
     @UseGuards(AccessTokenGuard)
-    deleteUserProductById() {}
+    deleteUserProductById(@Param('userProductId', ParseUUIDPipe) userProductId: string) {
+        return this.userProductsService.deleteUserProductById(userProductId);
+    }
 }
