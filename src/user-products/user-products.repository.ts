@@ -83,6 +83,22 @@ export class UserProductsRepository {
         });
     }
 
+    // 사용자 전자제품 수정
+    modifyUserProduct(
+        userProductId: string, userProductNickname?: string, usageStartDate?: string, imagePath?: string
+    ) {
+        return this.prismaService.user_products.update({
+            where: {
+                id: userProductId,
+            },
+            data: {
+                user_product_nickname: userProductNickname,
+                usage_start_date: usageStartDate,
+                image_path: imagePath,
+            },
+        });
+    }
+
     // 사용자 전자제품 삭제
     deleteUserProductById(userProductId: string) {
         return  this.prismaService.user_products.delete({
