@@ -56,12 +56,18 @@ export class UserProductsController {
     }
 
     // 사용자 전자제품 수정
-    @Patch(':id')
+    @Patch(':userProductId')
     @UseGuards(AccessTokenGuard)
-    modifyUserProductById() {}
+    modifyUserProductById(@Param('userProductId', ParseUUIDPipe) userProductId: string,
+    @Body('userProductNickname') userProductNickname?: string,
+    @Body('usageStartDate') usageStartDate?: string) {
+        return this.userProductsService.modifyUserProductById(userProductId, userProductNickname, usageStartDate);
+    }
 
     // 사용자 전자제품 삭제
-    @Delete(':id')
+    @Delete(':userProductId')
     @UseGuards(AccessTokenGuard)
-    removeUserProductById() {}
+    deleteUserProductById(@Param('userProductId', ParseUUIDPipe) userProductId: string) {
+        return this.userProductsService.deleteUserProductById(userProductId);
+    }
 }

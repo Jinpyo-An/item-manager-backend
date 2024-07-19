@@ -8,6 +8,7 @@ import {
 import {
     UserProductDto,
 } from './dtos/user-product.dto';
+import * as fs from 'fs';
 
 @Injectable()
 export class UserProductsService {
@@ -147,5 +148,34 @@ export class UserProductsService {
         return {
             userProductList,
         };
+    }
+
+    /**
+     * 사용자 전자제품 삭제 시나리오
+     * 1. userProductId 값을 받아 온다.
+     * 2. userProductId로 해당 사용자 전자제품이 있는지 확인한다.
+     * 3. 없으면 에러를 발생시키고, 있으면 해당 사용자 전자제품을 삭제한다.
+     */
+    async deleteUserProductById(userProductId: string): Promise<{message: string}> {
+        await this.userProductsRepository.getUserProduct(userProductId);
+
+        const userProduct =  await this.userProductsRepository.deleteUserProductById(userProductId);
+
+        if (userProduct.image_path !== null) {
+            fs.unlink(userProduct.image_path, err => {
+                if (err !== null && err.code === 'ENOENT') {
+                    console.log("파일 삭제 Error 발생");
+                }
+            });
+        }
+
+        return {
+            message: "사용자 전자제품이 삭제되었습니다.",
+        };
+    }
+
+    async modifyUserProductById(userProductId: string, userProductNickname?: string, usageStartDate?: string) {
+        await this.userProductsRepository.getUserProduct(userProductId);
+
     }
 }

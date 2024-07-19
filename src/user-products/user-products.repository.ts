@@ -82,4 +82,13 @@ export class UserProductsRepository {
             },
         });
     }
+
+    // 사용자 전자제품 삭제
+    deleteUserProductById(userProductId: string) {
+        return  this.prismaService.user_products.delete({
+            where: {
+                id: userProductId,
+            },
+        });
+    }
 }
