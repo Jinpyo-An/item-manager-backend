@@ -58,7 +58,6 @@ module.exports = {
         "ignoreUrls": true,
       },
     ],
-    "no-console": "error",
     "no-empty": [
       "error", {
         "allowEmptyCatch": false,
@@ -120,7 +119,7 @@ module.exports = {
       "never",
     ],
     "@typescript-eslint/interface-name-prefix": "off",
-    "@typescript-eslint/explicit-function-return-type": "error",
+    // "@typescript-eslint/explicit-function-return-type": "error",
     "@typescript-eslint/explicit-module-boundary-types": "error",
     "@typescript-eslint/no-explicit-any": "off",
   },

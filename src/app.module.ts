@@ -2,17 +2,32 @@ import {
     Module, 
 } from '@nestjs/common';
 import {
-    AppController, 
-} from './app.controller';
-import {
-    AppService, 
-} from './app.service';
-import {
     ConfigModule, 
 } from '@nestjs/config';
-import { PrismaService } from './prisma/prisma.service';
-import { PrisamModule } from './prisam/prisam.module';
-import { PrismaModule } from './prisma/prisma.module';
+import {
+    PrismaService, 
+} from './prisma/prisma.service';
+import {
+    PrismaModule,
+} from './prisma/prisma.module';
+import {
+    UsersModule, 
+} from './users/users.module';
+import {
+    AuthModule,
+} from './auth/auth.module';
+import {
+    ProductsModule, 
+} from './products/products.module';
+import {
+    UserProductsModule, 
+} from './user-products/user-products.module';
+import {
+    ServeStaticModule, 
+} from '@nestjs/serve-static';
+import {
+    PUBLIC_FOLDER_PATH, 
+} from './const/path.const';
 
 @Module({
     imports: [
@@ -21,10 +36,17 @@ import { PrismaModule } from './prisma/prisma.module';
             cache: true,
             envFilePath: '.env',
         }),
-        PrisamModule,
+        ServeStaticModule.forRoot({
+            rootPath: PUBLIC_FOLDER_PATH,
+            serveRoot: '/public',
+        }),
         PrismaModule,
+        UsersModule,
+        AuthModule,
+        ProductsModule,
+        UserProductsModule,
     ],
-    controllers: [AppController,],
-    providers: [AppService, PrismaService,],
+    controllers: [],
+    providers: [PrismaService,],
 })
 export class AppModule {}

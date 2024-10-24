@@ -220,7 +220,7 @@ dist
 # .idea/modules
 # *.iml
 # *.ipr
-
+.idea
 # CMake
 cmake-build-*/
 
@@ -323,3 +323,9 @@ data
 
 # prisma
 /prisma
+
+# jwt info
+/src/const/auth.const.ts
+
+#user product image file
+public/user-products/**
