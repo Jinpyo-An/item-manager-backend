@@ -326,6 +326,3 @@ data
 
 # jwt info
 /src/const/auth.const.ts
-
-#user product image file
-public/user-products/**
