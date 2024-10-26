@@ -1,1 +1,1 @@
-pnpm run start:build $$ pnpm run start
+pnpm run build && pnpm run start

@@ -28,6 +28,8 @@ import {
 import {
     PUBLIC_FOLDER_PATH, 
 } from './const/path.const';
+import { AppController } from './app.controller';
+
 
 @Module({
     imports: [
@@ -46,7 +48,7 @@ import {
         ProductsModule,
         UserProductsModule,
     ],
-    controllers: [],
+    controllers: [AppController],
     providers: [PrismaService,],
 })
 export class AppModule {}
