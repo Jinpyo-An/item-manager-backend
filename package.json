@@ -1,8 +1,8 @@
 {
   "name": "item-manager-backend",
   "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "description": "capstone project",
+  "author": "Jinpyo An",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
