@@ -6,7 +6,7 @@ import {
     UsersService, 
 } from './users.service';
 
-@Controller('api/users')
+@Controller('item-manager/api/users')
 export class UsersController {
     constructor(private readonly usersService: UsersService) {}
 

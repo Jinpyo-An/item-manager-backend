@@ -8,7 +8,7 @@ import {
     AccessTokenGuard, 
 } from '../auth/guard/bearer-token.guard';
 
-@Controller('api/products')
+@Controller('item-manager/api/products')
 export class ProductsController {
     constructor(private readonly productsService: ProductsService) {}
 

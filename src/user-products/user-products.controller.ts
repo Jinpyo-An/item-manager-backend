@@ -18,7 +18,7 @@ import {
     USER_PRODUCTS_PUBLIC_IMAGE_PATH,
 } from '../const/path.const';
 
-@Controller('api/user-products')
+@Controller('item-manager/api/user-products')
 export class UserProductsController {
     constructor(private readonly userProductsService: UserProductsService) {}
 
