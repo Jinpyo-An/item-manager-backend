@@ -1,8 +1,8 @@
 import { Controller, Get } from '@nestjs/common';
 
-@Controller('app')
+@Controller('/item-manager/app')
 export class AppController {
-  @Get('hello')
+  @Get()
   getHello(): string {
     return 'Hello World!';
   }

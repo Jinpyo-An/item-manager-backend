@@ -21,7 +21,7 @@ import {
     RefreshTokenGuard,
 } from './guard/bearer-token.guard';
 
-@Controller('api/auth')
+@Controller('item-manager/api/auth')
 export class AuthController {
     constructor(private readonly authService: AuthService) {}
 
