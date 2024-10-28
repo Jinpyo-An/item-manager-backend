@@ -11,9 +11,13 @@ import {
 import {
     ConfigService, 
 } from '@nestjs/config';
+import {
+    NestExpressApplication,
+} from "@nestjs/platform-express";
+import * as path from "node:path";
 
 async function bootstrap(): Promise<void> {
-    const app = await NestFactory.create(AppModule);
+    const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
     app.enableCors({
         origin: true,
@@ -27,6 +31,8 @@ async function bootstrap(): Promise<void> {
             transform: true,
         }),
     );
+
+    app.useStaticAssets(path.join(__dirname, '../public/user-products',));
 
     const configService = app.get(ConfigService);
     const PORT = configService.get('APP_PORT');
